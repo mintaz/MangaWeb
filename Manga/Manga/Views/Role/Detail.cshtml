@@ -36,6 +36,24 @@
         </tr>
     }
 </table>
+<h4>List of permissions for this role</h4>
+@if (ViewBag.PermissionsCount == 0)
+{
+    <hr />
+    <p>No permissions for this role.</p>
+}
+
+<table class="table">
+
+    @foreach (var item in ViewBag.Permissions)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+        </tr>
+    }
+</table>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")

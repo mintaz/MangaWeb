@@ -25,6 +25,7 @@ namespace Manga.Controllers
             UserManager = userManager;
             RoleManager = roleManager;
         }
+        public ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
         public ApplicationUserManager UserManager
         {
@@ -161,7 +162,7 @@ namespace Manga.Controllers
             var role = await RoleManager.FindByIdAsync(id);
             // Get the list of Users in this Role
             var users = new List<ApplicationUser>();
-
+            var permissions = new List<Permission>();
             // Get the list of Users in this Role
             foreach (var user in UserManager.Users.ToList())
             {
@@ -170,7 +171,9 @@ namespace Manga.Controllers
                     users.Add(user);
                 }
             }
-
+            permissions = db.UserRolePermission.Where(s => s.ApplicationRoleId == id).Select(c => c.Permission).ToList();
+            ViewBag.Permissions = permissions;
+            ViewBag.PermissionsCount = permissions.Count();
             ViewBag.Users = users;
             ViewBag.UserCount = users.Count();
             return View(role);
