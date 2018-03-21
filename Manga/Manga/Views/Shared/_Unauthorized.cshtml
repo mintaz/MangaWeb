@@ -1,0 +1,18 @@
+﻿
+
+@{
+    ViewBag.Title = "Unauthorized";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>Unauthorized</h2>
+<div>
+    <span class="alert"> You don't have authorization to do this function </span>
+</div>
+<div>
+    <p>
+        @Html.ActionLink("Back to Previous Page", null, null, null, new { href = Request.UrlReferrer })
+    </p>
+</div>
+
