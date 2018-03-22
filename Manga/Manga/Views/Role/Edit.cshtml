@@ -1,4 +1,4 @@
-﻿@model Manga.Models.AdminRoleModel
+﻿@model Manga.Models.RolePermissionView
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,26 +10,35 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>Roles.</h4>
-        <hr />
-        @Html.ValidationSummary(true)
-        @Html.HiddenFor(model => model.Id)
+<div class="form-horizontal">
+    <h4>Roles.</h4>
+    <hr />
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Name)
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Name)
         </div>
     </div>
+    <div class="form-group">
+        @Html.Label("Permission", new { @class = "control-label col-md-2" })
+        <span class=" col-md-10">
+            @foreach (var item in Model.permissionList)
+            {
+                <input type="checkbox" name="SelectedRole" value="@item.Value" checked="@item.Selected" class="checkbox-inline" />
+                @Html.Label(item.Text, new { @class = "control-label" })
+            }
+        </span>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
 }
 
 <div>

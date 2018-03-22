@@ -57,10 +57,12 @@ namespace Manga.Controllers
         }
         public ActionResult Create()
         {
+            var listOfPermission = new SelectList(db.Permission.ToList(),"Id","Name");
+            ViewBag.listOfPermissions = listOfPermission;
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Create(AdminRoleModel roleViewModel)
+        public async Task<ActionResult> Create(AdminRoleModel roleViewModel, params int[] selectPermissions)
         {
             if (ModelState.IsValid)
             {
@@ -71,7 +73,12 @@ namespace Manga.Controllers
                     ModelState.AddModelError("", roleresult.Errors.First());
                     return View();
                 }
+                else {
+                    UpdatePermission(role.Id, selectPermissions);
                 return RedirectToAction("Index");
+                }
+
+                
             }
             return View();
         }
@@ -87,8 +94,20 @@ namespace Manga.Controllers
             {
                 return HttpNotFound();
             }
-            AdminRoleModel roleModel = new AdminRoleModel { Id = role.Id, Name = role.Name };
-            return View(roleModel);
+            var permission = db.UserRolePermission.Where(s => s.ApplicationRoleId == id).Select(x=>x.Id).ToList();
+            var roleModels = new RolePermissionView
+            {
+                Id = role.Id,
+                Name = role.Name,
+                permissionList = db.Permission.ToList().Select(x => new SelectListItem()
+                {
+                    Selected = permission.Contains(x.Id),
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                })
+            };
+           // AdminRoleModel roleModel = new AdminRoleModel { Id = role.Id, Name = role.Name };
+            return View(roleModels);
         }
         [HttpPost]
 
@@ -142,8 +161,10 @@ namespace Manga.Controllers
                 }
                 else
                 {
+                    DeleteRolePermission(role.Id);
                     result = await RoleManager.DeleteAsync(role);
                 }
+
                 if (!result.Succeeded)
                 {
                     ModelState.AddModelError("", result.Errors.First());
@@ -177,6 +198,50 @@ namespace Manga.Controllers
             ViewBag.Users = users;
             ViewBag.UserCount = users.Count();
             return View(role);
+        }
+        private void UpdatePermission(string RoleId, int[] Permissions)
+        {
+            var listOfpermission = new List<UserRolePermission>();
+            if (db.UserRolePermission.Any(s => s.ApplicationRoleId == RoleId))
+            {
+                var listOfPermission = db.UserRolePermission.Where(s => s.ApplicationRoleId == RoleId).ToList();
+                foreach (var itemremove in listOfpermission)
+                {
+                    if (!Permissions.Contains(itemremove.Id))
+                    {
+                        db.UserRolePermission.Remove(itemremove);
+                    }
+                }
+
+            }
+            else
+            {
+                foreach (var item in db.Permission)
+                {
+                    if (Permissions.Contains(item.Id))
+                    {
+                        var newPermission = new UserRolePermission();
+                        newPermission.ApplicationRoleId = RoleId;
+                        newPermission.PermissionId = item.Id;
+                        listOfpermission.Add(newPermission);
+                    }
+                }
+                foreach (var per in listOfpermission)
+                {
+                    db.UserRolePermission.Add(per);
+                }
+            }
+            db.SaveChanges();
+
+        }
+        private void DeleteRolePermission(string RoleId)
+        {
+            var listToRemove = db.UserRolePermission.Where(s => s.ApplicationRoleId == RoleId).ToList();
+            foreach(var itemRemove in listToRemove)
+            {
+                db.UserRolePermission.Remove(itemRemove);
+            }
+            db.SaveChanges();
         }
 
 

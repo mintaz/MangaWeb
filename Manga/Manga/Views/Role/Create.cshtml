@@ -22,6 +22,24 @@
                 @Html.ValidationMessageFor(model => model.Name)
             </div>
         </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                Select Permission for Role
+            </label>
+            <div class="col-md-10">
+                <ul>
+                    @foreach (var item in (SelectList)ViewBag.listOfPermissions)
+                    {
+
+                        <li>
+                            <input type="checkbox" name="selectPermissions" value="@item.Value" class="checkbox-inline" />
+                            @Html.Label(item.Text, new { @class = "control-label" })
+                        </li>
+
+                    }
+                </ul>
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

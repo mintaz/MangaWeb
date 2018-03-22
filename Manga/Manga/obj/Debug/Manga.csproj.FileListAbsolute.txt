@@ -141,7 +141,6 @@ C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\bin\Microsoft.AI.DependencyCol
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\bin\Microsoft.AI.ServerTelemetryChannel.xml
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\bin\Microsoft.AI.WindowsServer.xml
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\bin\Microsoft.AI.Web.xml
-C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.csprojResolveAssemblyReference.cache
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.Migrations.InitialTables.resources
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.Migrations.AddProductCategoryPermissiontables.resources
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.Migrations.SeedOnly.resources
