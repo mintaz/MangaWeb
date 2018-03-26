@@ -79,6 +79,7 @@ namespace Manga.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+        public IEnumerable<AdminUserView> PermissionList { get; set; }
     }
 
     public class ResetPasswordViewModel

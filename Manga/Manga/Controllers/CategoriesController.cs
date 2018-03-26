@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Manga.Filter;
 using Manga.Models;
 
 namespace Manga.Controllers
@@ -19,7 +20,6 @@ namespace Manga.Controllers
         {
             return View(db.Category.ToList());
         }
-
         // GET: Categories/Details/5
         public ActionResult Detail(int? id)
         {

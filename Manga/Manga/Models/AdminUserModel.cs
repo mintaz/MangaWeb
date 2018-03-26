@@ -17,5 +17,6 @@ namespace Manga.Models
         public string Email { get; set; }
 
         public IEnumerable<SelectListItem> RolesList { get; set; }
+        public IEnumerable<AdminUserView> PermissionList { get; set; }
     }
 }

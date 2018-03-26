@@ -10,6 +10,7 @@ namespace Manga.Controllers
             return View();
         }
 
+        [MVCAuthPermission("ReadAbout")]
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

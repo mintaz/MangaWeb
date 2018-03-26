@@ -149,3 +149,4 @@ C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.csproj.Generat
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.csproj.CoreCompileInputs.cache
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.dll
 C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.pdb
+C:\Users\PC1\Desktop\GitRepo\MangaWeb\Manga\Manga\obj\Debug\Manga.csprojResolveAssemblyReference.cache
