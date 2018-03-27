@@ -1,4 +1,5 @@
-﻿using Manga.Models;
+﻿using Manga.Filter;
+using Manga.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 
 namespace Manga.Controllers
 {
+    [Authorize]
     public class RoleController : Controller
     {
         public RoleController()
@@ -51,10 +53,12 @@ namespace Manga.Controllers
                 _roleManager = value;
             }
         }
+        [MVCAuthPermission("Role.Read")]
         public ActionResult Index()
         {
             return View(RoleManager.Roles);
         }
+        [MVCAuthPermission("Role.Create")]
         public ActionResult Create()
         {
             var listOfPermission = new SelectList(db.Permission.ToList(), "Id", "Name");
@@ -62,6 +66,7 @@ namespace Manga.Controllers
             return View();
         }
         [HttpPost]
+        [MVCAuthPermission("Role.Create")]
         public async Task<ActionResult> Create(AdminRoleModel roleViewModel, params int[] selectPermissions)
         {
             if (ModelState.IsValid)
@@ -83,7 +88,7 @@ namespace Manga.Controllers
             }
             return View();
         }
-
+        [MVCAuthPermission("Role.Update")]
         public async Task<ActionResult> Edit(string id)
         {
             if (id == null)
@@ -112,8 +117,8 @@ namespace Manga.Controllers
             return View(roleModels);
         }
         [HttpPost]
-
         [ValidateAntiForgeryToken]
+        [MVCAuthPermission("Role.Update")]
         public async Task<ActionResult> Edit([Bind(Include = "Name,Id")] AdminRoleModel roleModel, params int[] selectPermissions)
         {
             if (ModelState.IsValid)
@@ -126,6 +131,7 @@ namespace Manga.Controllers
             }
             return View();
         }
+        [MVCAuthPermission("Role.Delete")]
         public async Task<ActionResult> Delete(string id)
         {
             if (id == null)
@@ -144,6 +150,7 @@ namespace Manga.Controllers
         // POST: /Roles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [MVCAuthPermission("Role.Delete")]
         public async Task<ActionResult> DeleteConfirmed(string id, string deleteUser)
         {
             if (ModelState.IsValid)
@@ -177,6 +184,7 @@ namespace Manga.Controllers
             }
             return View();
         }
+        [MVCAuthPermission("Role.Read")]
         public async Task<ActionResult> Detail(string id)
         {
             if (id == null)
@@ -204,35 +212,40 @@ namespace Manga.Controllers
         }
         private void UpdatePermission(string RoleId, int[] Permissions)
         {
-            var selectedPermission = new HashSet<int>(Permissions);
-            var listOfPermission = new HashSet<int>(db.UserRolePermission.Where(c => c.ApplicationRoleId==RoleId).Select(x => x.PermissionId));
-            var listToRemove = new HashSet<UserRolePermission>();
-            foreach(var item in db.Permission)
+            var ListOfOldPermission = new HashSet<UserRolePermission>(db.UserRolePermission.Where(x => x.ApplicationRoleId == RoleId));
+            var ListOfUserOfRoles = db.Users.Where(c => c.Roles.Any(z => z.RoleId == RoleId)).Select(a => a.Id).ToList();
+            foreach (var item in ListOfOldPermission)
             {
-                if (selectedPermission.Contains(item.Id))
+                db.UserRolePermission.Remove(item);
+            }
+            if (ListOfUserOfRoles.Count !=0)
+            {
+                foreach (int newItemId in Permissions)
                 {
-                    if (!listOfPermission.Contains(item.Id))
+                    foreach (string userId in ListOfUserOfRoles)
                     {
-                        var newPermission = new UserRolePermission
+                        var newItem = new UserRolePermission
                         {
                             ApplicationRoleId = RoleId,
-                            PermissionId = item.Id
+                            PermissionId = newItemId,
+                            ApplicationUserId = userId
                         };
-                        db.UserRolePermission.Add(newPermission);
+                        db.UserRolePermission.Add(newItem);
                     }
-                }
-                else
-                {
-                    if (listOfPermission.Contains(item.Id))
-                    {
-                        UserRolePermission itemRemove = db.UserRolePermission.FirstOrDefault(x => x.PermissionId == item.Id);
-                        listToRemove.Add(itemRemove);
-                    }
+
                 }
             }
-            foreach(var itemRemove in listToRemove)
+            else
             {
-                db.UserRolePermission.Remove(itemRemove);
+                foreach (int newItemId in Permissions)
+                {
+                    var newItem = new UserRolePermission
+                    {
+                        ApplicationRoleId = RoleId,
+                        PermissionId = newItemId
+                    };
+                    db.UserRolePermission.Add(newItem);
+                }
             }
             db.SaveChanges();
         }

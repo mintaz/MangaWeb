@@ -1,4 +1,4 @@
-﻿@model Manga.Models.Product
+﻿@model Manga.Models.ProductViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -31,7 +31,7 @@
             @foreach (var item in (SelectList)ViewBag.CategoriesId)
             {
                 <input type="checkbox" name="SelectedCategories" value="@item.Value" class="checkbox-inline" />
-                @Html.Label(item.Value, new { @class = "control-label" })
+                @Html.Label(item.Text, new { @class = "control-label" })
             }
         </div>
     </div>

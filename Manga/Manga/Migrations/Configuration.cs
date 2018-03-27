@@ -1,15 +1,10 @@
 namespace Manga.Migrations
 {
     using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
-    using System.Web;
     using Manga.Models;
-    using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using Microsoft.AspNet.Identity.Owin;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Manga.Models.ApplicationDbContext>
     {
@@ -19,76 +14,29 @@ namespace Manga.Migrations
             
         }
 
+
         protected override void Seed(ApplicationDbContext context)
         {
-            context.Configuration.LazyLoadingEnabled = true;
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-
-            if (!roleManager.RoleExists("Admin"))
-            {
-                roleManager.Create(new IdentityRole("Admin"));
-            }
-            if (!roleManager.RoleExists("Smod"))
-            {
-                roleManager.Create(new IdentityRole("Smod"));
-            }
-
-            var user = new ApplicationUser { Email = "minhle1508@gmail.com" };
-
-
-            if (userManager.FindByEmail("minhle1508@gmail.com") == null)
-            {
-                var result = userManager.Create(user, "P@ssw0rd");
-
-                if (result.Succeeded)
-                {
-                    userManager.AddToRole(user.Id, "Admin");
-                }
-
-            }
-            context.SaveChanges();
-            var permissions = new List<Permission> {
-                new Permission { Name ="ReadAbout" },
-                new Permission{ Name = "ReadContact"},
-                new Permission{Name = "ReadPermission"}
-            };
-            permissions.ForEach(s => context.Permission.AddOrUpdate(c => c.Name, s));
-            context.SaveChanges();
             
-            context.Category.AddOrUpdate(
-                new Category()
-                {
-                    Title ="Kinh Dị",
-                    Products = new List<Product>
-                    {
-                        new Product()
-                        {
-                            Name = "Doraemon"
-                        },
-                        new Product()
-                        {
-                            Name = "Dragonball"
-                        }
-                    }
-                },
-                 new Category()
-                 {
-                     Title = "Lãng Mạn",
-                     Products = new List<Product>
-                    {
-                        new Product()
-                        {
-                            Name = "Đêm trong căn nhà hoang"
-                        },
-                        new Product()
-                        {
-                            Name = "Hồn về trong gió"
-                        }
-                    }
-                 }
+            context.Permission.AddOrUpdate(
+                p => p.Keyword,
+                new Permission { Name= "Read Product", Keyword = "Product.Read" },
+                new Permission { Name = "Update Product", Keyword = "Product.Update" },
+                new Permission { Name = "Delete Product", Keyword = "Product.Delete" },
+                new Permission { Name = "Create Product", Keyword = "Product.Create" },
+                new Permission { Name = "Read Catagory", Keyword = "Catagory.Read" },
+                new Permission { Name = "Create Catagory", Keyword = "Catagory.Create" },
+                new Permission { Name = "Update Catagory", Keyword = "Catagory.Update" },
+                new Permission { Name = "Delete Catagory", Keyword = "Catagory.Delete" },
+                new Permission { Name = "Read User", Keyword = "User.Read" },
+                new Permission { Name = "Update User", Keyword = "User.Update" },
+                new Permission { Name = "Delete User", Keyword = "User.Delete" },
+                new Permission { Name = "Create User", Keyword = "User.Create" },
+                new Permission { Name = "Read Role", Keyword = "Role.Read" },
+                new Permission { Name = "Update Role", Keyword = "Role.Update" },
+                new Permission { Name = "Delete Role", Keyword = "Role.Delete" },
+                new Permission { Name = "Create Role", Keyword = "Role.Create" }
                 );
-            context.SaveChanges();
 
 
             //  This method will be called after migrating to the latest version.
@@ -104,37 +52,37 @@ namespace Manga.Migrations
             //    );
             //
         }
-        public static void InitializeIdentityForEF(ApplicationDbContext db)
-        {
-            var roleManager = new RoleManager<ApplicationRole>(new RoleStore<ApplicationRole>(db));
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+        //public static void InitializeIdentityForEF(ApplicationDbContext db)
+        //{
+        //    var roleManager = new RoleManager<ApplicationRole>(new RoleStore<ApplicationRole>(db));
+        //    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
 
-            const string name = "admin@admin.com";
-            const string password = "Admin@123456";
-            const string roleName = "Admin";
+        //    const string name = "admin@admin.com";
+        //    const string password = "Admin@123456";
+        //    const string roleName = "Admin";
 
-            //Create Role Admin if it does not exist
-            var role = roleManager.FindByName(roleName);
-            if (role == null)
-            {
-                role = new ApplicationRole(roleName);
-                var roleresult = roleManager.Create(role);
-            }
+        //    //Create Role Admin if it does not exist
+        //    var role = roleManager.FindByName(roleName);
+        //    if (role == null)
+        //    {
+        //        role = new ApplicationRole(roleName);
+        //        var roleresult = roleManager.Create(role);
+        //    }
 
-            var user = userManager.FindByName(name);
-            if (user == null)
-            {
-                user = new ApplicationUser { UserName = name, Email = name };
-                var result = userManager.Create(user, password);
-                result = userManager.SetLockoutEnabled(user.Id, false);
-            }
+        //    var user = userManager.FindByName(name);
+        //    if (user == null)
+        //    {
+        //        user = new ApplicationUser { UserName = name, Email = name };
+        //        var result = userManager.Create(user, password);
+        //        result = userManager.SetLockoutEnabled(user.Id, false);
+        //    }
 
-            // Add user admin to Role Admin if not already added
-            var rolesForUser = userManager.GetRoles(user.Id);
-            if (!rolesForUser.Contains(role.Name))
-            {
-                var result = userManager.AddToRole(user.Id, role.Name);
-            }
-        }
+        //    // Add user admin to Role Admin if not already added
+        //    var rolesForUser = userManager.GetRoles(user.Id);
+        //    if (!rolesForUser.Contains(role.Name))
+        //    {
+        //        var result = userManager.AddToRole(user.Id, role.Name);
+        //    }
+        //}
     }
 }

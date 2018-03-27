@@ -31,7 +31,6 @@
                     {
                         <li>@Html.ActionLink("Role", "Index", "Role")</li>
                         <li>@Html.ActionLink("User", "Index", "User")</li>
-                        <li>@Html.ActionLink("Permissions", "Index", "Permissions")</li>
                     }
                      @if (Request.IsAuthenticated && (User.IsInRole("Mod")|| User.IsInRole("Admin")))
                     {

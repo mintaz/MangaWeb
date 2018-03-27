@@ -37,7 +37,7 @@ namespace Manga.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("MangaContext", throwIfV1Schema: false)
         {
         }
         public DbSet<Product> Product { get; set; }
@@ -49,7 +49,5 @@ namespace Manga.Models
         {
             return new ApplicationDbContext();
         }
-
-       // public System.Data.Entity.DbSet<Manga.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

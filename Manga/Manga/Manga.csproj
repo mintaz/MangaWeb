@@ -188,7 +188,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
-    <Compile Include="Controllers\PermissionsController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -217,6 +216,10 @@
     <Compile Include="Migrations\201803210717386_Edit Product Table - Remove useless column.Designer.cs">
       <DependentUpon>201803210717386_Edit Product Table - Remove useless column.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803270352354_Add Keyword to permission tables.cs" />
+    <Compile Include="Migrations\201803270352354_Add Keyword to permission tables.Designer.cs">
+      <DependentUpon>201803270352354_Add Keyword to permission tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminRoleModel.cs" />
@@ -227,6 +230,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Permission.cs" />
     <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\ProductViewModel.cs" />
     <Compile Include="Models\RolePermissionView.cs" />
     <Compile Include="Models\UserRolePermission.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -264,7 +268,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -313,12 +319,8 @@
     <Content Include="Views\Categories\Detail.cshtml" />
     <Content Include="Views\Categories\Edit.cshtml" />
     <Content Include="Views\Categories\Index.cshtml" />
-    <Content Include="Views\Permissions\Create.cshtml" />
-    <Content Include="Views\Permissions\Delete.cshtml" />
-    <Content Include="Views\Permissions\Details.cshtml" />
-    <Content Include="Views\Permissions\Edit.cshtml" />
-    <Content Include="Views\Permissions\Index.cshtml" />
     <Content Include="Views\Shared\_Unauthorized.cshtml" />
+    <Content Include="Views\User\EditPermission.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -347,6 +349,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803210717386_Edit Product Table - Remove useless column.resx">
       <DependentUpon>201803210717386_Edit Product Table - Remove useless column.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803270352354_Add Keyword to permission tables.resx">
+      <DependentUpon>201803270352354_Add Keyword to permission tables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

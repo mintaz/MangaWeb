@@ -11,16 +11,19 @@ using Manga.Models;
 
 namespace Manga.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Products
+        [MVCAuthPermission("Product.Read")]
         public ActionResult Index()
         {
             return View(db.Product.ToList());
         }
 
+        [MVCAuthPermission("Product.Read")]
         // GET: Products/Details/5
         public ActionResult Detail(int? id)
         {
@@ -40,10 +43,10 @@ namespace Manga.Controllers
         }
 
         // GET: Products/Create
-        [MVCAuthPermission("Create Product")]
+        [MVCAuthPermission("Product.Create")]
         public ActionResult Create()
         {
-            ViewBag.CategoriesId = new SelectList(db.Category.ToList(),"Title","Title");
+            ViewBag.CategoriesId = new SelectList(db.Category.ToList(),"Id","Title");
             return View();
         }
 
@@ -52,7 +55,8 @@ namespace Manga.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name")] Product product, params string[] SelectedCategories)
+        [MVCAuthPermission("Product.Create")]
+        public ActionResult Create([Bind(Include = "Id,Name")] Product product, params int[] SelectedCategories)
         {
             if (ModelState.IsValid)
             {
@@ -66,6 +70,7 @@ namespace Manga.Controllers
         }
 
         // GET: Products/Edit/5
+        [MVCAuthPermission("Product.Edit")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -73,10 +78,14 @@ namespace Manga.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Product product = db.Product.Find(id);
-            if (product == null)
+            var catelogries = db.Product.Where(s => s.Id == id).SelectMany(c => c.Categories).ToList();
+            var list = db.Category.AsEnumerable().Select(x => new SelectListItem
             {
-                return HttpNotFound();
-            }
+                Selected = catelogries.Contains(x),
+                Text = x.Title,
+                Value = x.Id.ToString()
+            });
+            ViewBag.CatagoryList = list;
             return View(product);
         }
 
@@ -85,11 +94,14 @@ namespace Manga.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,CategoriesId")] Product product)
+        [MVCAuthPermission("Product.Edit")]
+        public ActionResult Edit([Bind(Include = "Id,Name")] Product product, int[] selectCategories)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
+                var productEdit = db.Product.Where(x => x.Id == product.Id).Include(c => c.Categories).SingleOrDefault();
+                UpdateCategories(selectCategories, productEdit);
+                productEdit.Name = product.Name;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -97,6 +109,7 @@ namespace Manga.Controllers
         }
 
         // GET: Products/Delete/5
+        [MVCAuthPermission("Product.Delete")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -111,6 +124,7 @@ namespace Manga.Controllers
             return View(product);
         }
 
+        [MVCAuthPermission("Product.Delete")]
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -130,7 +144,7 @@ namespace Manga.Controllers
             }
             base.Dispose(disposing);
         }
-        private void UpdateCategories(string[] selectedCategories, Product productToUpdate)
+        private void UpdateCategories(int[] selectedCategories, Product productToUpdate)
         {
             if (selectedCategories == null)
             {
@@ -138,12 +152,12 @@ namespace Manga.Controllers
                 return;
             }
 
-            var selectedCategoriesHS = new HashSet<string>(selectedCategories);
-            var productCategories = new HashSet<int>(productToUpdate.Categories.Select(c => c.Id));
+            var selectedCategoriesHS = new HashSet<int>(selectedCategories);
+            var productCategories = new HashSet<int>(productToUpdate.Categories.Select(c =>c.Id));
 
             foreach (var item in db.Category)
             {
-                if (selectedCategoriesHS.Contains(item.Title.ToString()))
+                if (selectedCategoriesHS.Contains(item.Id))
                 {
                     if (!productCategories.Contains(item.Id))
                     {
