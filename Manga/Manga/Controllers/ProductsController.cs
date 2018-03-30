@@ -12,12 +12,14 @@ using Manga.Models;
 namespace Manga.Controllers
 {
     [Authorize]
+    //[RoutePrefix("Quang")]
     public class ProductsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Products
         [MVCAuthPermission("Product.Read")]
+        //[Route("Index")]
         public ActionResult Index()
         {
             return View(db.Product.ToList());
@@ -25,6 +27,7 @@ namespace Manga.Controllers
 
         [MVCAuthPermission("Product.Read")]
         // GET: Products/Details/5
+        //[Route("Detail/{id}")]
         public ActionResult Detail(int? id)
         {
             if (id == null)
@@ -70,7 +73,7 @@ namespace Manga.Controllers
         }
 
         // GET: Products/Edit/5
-        [MVCAuthPermission("Product.Edit")]
+        [MVCAuthPermission("Product.Update")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +97,7 @@ namespace Manga.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [MVCAuthPermission("Product.Edit")]
+        [MVCAuthPermission("Product.Update")]
         public ActionResult Edit([Bind(Include = "Id,Name")] Product product, int[] selectCategories)
         {
             if (ModelState.IsValid)

@@ -26,23 +26,16 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-
-                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <li>@Html.ActionLink("Role", "Index", "Role")</li>
-                        <li>@Html.ActionLink("User", "Index", "User")</li>
-                    }
-                     @if (Request.IsAuthenticated && (User.IsInRole("Mod")|| User.IsInRole("Admin")))
-                    {
-                        <li>@Html.ActionLink("Products", "Index", "Products")</li>
-                        <li>@Html.ActionLink("Categories", "Index", "Categories")</li>
-                    }
+                    <li>@Html.ActionLink("Role", "Index", "Role")</li>
+                    <li>@Html.ActionLink("User", "Index", "User")</li>
+                    <li>@Html.ActionLink("Products", "Index", "Products")</li>
+                    <li>@Html.ActionLink("Categories", "Index", "Categories")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </div>
-   
+
     <div class="container body-content">
         @RenderBody()
         <hr />

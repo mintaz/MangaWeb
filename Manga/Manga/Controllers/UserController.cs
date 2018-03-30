@@ -66,7 +66,7 @@ namespace Manga.Controllers
             var user = await UserManager.FindByIdAsync(id);
             var permissions = new List<Permission>();
             ViewBag.RoleNames = await UserManager.GetRolesAsync(user.Id);
-            permissions = db.UserRolePermission.Where(s => s.ApplicationUserId == id).Select(c => c.Permission).ToList();
+            permissions = db.UserRolePermission.Where(s => s.ApplicationUserId == id).Select(c => c.Permission).Distinct().ToList();
             ViewBag.Permissions = permissions;
             ViewBag.PermissionsCount = permissions.Count();
             return View(user);
@@ -91,6 +91,30 @@ namespace Manga.Controllers
                 if (adminresult.Succeeded)
                 {
                     var result = await UserManager.AddToRolesAsync(user.Id, selectedRoles);
+                    List<string> RoleIdList = new List<string>();
+                    foreach(var itemRole in db.Roles)
+                    {
+                        if (selectedRoles.Contains(itemRole.Name))
+                        {
+                            RoleIdList.Add(itemRole.Id);
+                        }
+                    }
+                    foreach(string roleId in RoleIdList)
+                    {
+                        foreach(var item in db.UserRolePermission)
+                        {
+                            if(item.ApplicationRoleId == roleId)
+                            {
+                                var newPermissionId = new UserRolePermission
+                                {
+                                    ApplicationUserId = user.Id,
+                                    PermissionId = item.PermissionId
+                                };
+                                db.UserRolePermission.Add(newPermissionId);
+                            }
+                        }
+                    }
+                    db.SaveChanges();
                     if (!result.Succeeded)
                     {
                         ModelState.AddModelError("", result.Errors.First());
@@ -170,7 +194,7 @@ namespace Manga.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [MVCAuthPermission("User.Update")]
-        public async Task<ActionResult> EditPermission([Bind(Include = "Email,Id")] AdminUserModel editUser,  params int[] SelectedPermission)
+        public async Task<ActionResult> EditPermission([Bind(Include = "Email,Id")] AdminUserModel editUser, int[] SelectedPermission)
         {
             if (ModelState.IsValid)
             {
@@ -183,6 +207,7 @@ namespace Manga.Controllers
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("", "Something failed.");
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
             return View();
         }
         //
@@ -190,7 +215,7 @@ namespace Manga.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [MVCAuthPermission("User.Update")]
-        public async Task<ActionResult> Edit([Bind(Include = "Email,Id")] AdminUserModel editUser, string[] selectedRole, params int[] SelectedPermission)
+        public async Task<ActionResult> Edit([Bind(Include = "Email,Id")] AdminUserModel editUser, string[] selectedRole)
         {
             if (ModelState.IsValid)
             {
@@ -215,13 +240,35 @@ namespace Manga.Controllers
                     return View();
                 }
                 result = await UserManager.RemoveFromRolesAsync(user.Id, userRoles.Except(selectedRole).ToArray<string>());
-
+                List<string> RoleIdList = new List<string>();
+                foreach (var itemRole in db.Roles)
+                {
+                    if (selectedRole.Contains(itemRole.Name))
+                    {
+                        RoleIdList.Add(itemRole.Id);
+                    }
+                }
+                foreach (string roleId in RoleIdList)
+                {
+                    foreach (var item in db.UserRolePermission)
+                    {
+                        if (item.ApplicationRoleId == roleId)
+                        {
+                            var newPermissionId = new UserRolePermission
+                            {
+                                ApplicationUserId = user.Id,
+                                PermissionId = item.PermissionId
+                            };
+                            db.UserRolePermission.Add(newPermissionId);
+                        }
+                    }
+                }
+                db.SaveChanges();
                 if (!result.Succeeded)
                 {
                     ModelState.AddModelError("", result.Errors.First());
                     return View();
                 }
-                UpdatePermission(user.Id, SelectedPermission);
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("", "Something failed.");
@@ -261,6 +308,7 @@ namespace Manga.Controllers
                 {
                     return HttpNotFound();
                 }
+                DeleteUserPermission(id);
                 var result = await UserManager.DeleteAsync(user);
                 if (!result.Succeeded)
                 {

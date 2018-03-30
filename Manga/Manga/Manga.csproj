@@ -34,7 +34,8 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -220,6 +222,10 @@
     <Compile Include="Migrations\201803270352354_Add Keyword to permission tables.Designer.cs">
       <DependentUpon>201803270352354_Add Keyword to permission tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803280318487_Add property for Product Tables.cs" />
+    <Compile Include="Migrations\201803280318487_Add property for Product Tables.Designer.cs">
+      <DependentUpon>201803280318487_Add property for Product Tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminRoleModel.cs" />
@@ -321,6 +327,7 @@
     <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Views\Shared\_Unauthorized.cshtml" />
     <Content Include="Views\User\EditPermission.cshtml" />
+    <Content Include="Views\Error\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -352,6 +359,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803270352354_Add Keyword to permission tables.resx">
       <DependentUpon>201803270352354_Add Keyword to permission tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803280318487_Add property for Product Tables.resx">
+      <DependentUpon>201803280318487_Add property for Product Tables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
